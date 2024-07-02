@@ -9,23 +9,25 @@ type Book struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
 	Author    Author    `json:"author"`
+	Genre     string    `json:"genre"`
+	Synopsis  string    `json:"synopsis"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type BookRepository interface {
-	Create(entity Book) (*Book, error)
+	Create(book Book) error
 	GetAll() ([]Book, error)
 	GetById(id int) (*Book, error)
-	Update(entity Book, entityUpdate Book) (*Book, error)
+	Update(id int, book Book) error
 	Delete(id int) error
 }
 
 type BookService interface {
-	Create(entity Book) (*Book, error)
+	Create(book Book) error
 	GetAll() ([]Book, error)
-	GetById(id int) (Book, error)
-	Update(entity Book, entityUpdate Book) (*Book, error)
+	GetById(id int) (*Book, error)
+	Update(id int, book Book) error
 	Delete(id int) error
 }
 

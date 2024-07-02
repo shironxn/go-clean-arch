@@ -1,10 +1,11 @@
-package config
+package db
 
 import (
 	"database/sql"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/shironxn/go-clean-arch/internal/config"
 )
 
 type Databse struct {
@@ -15,7 +16,7 @@ type Databse struct {
 	Name string
 }
 
-func NewDatabase(conf DatabaseConfig) *Databse {
+func NewDatabase(conf config.DatabaseConfig) *Databse {
 	return &Databse{
 		User: conf.User,
 		Pass: conf.Pass,
