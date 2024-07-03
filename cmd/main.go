@@ -25,7 +25,11 @@ func main() {
 	authorService := service.NewAuthorService(authorRepository)
 	authorHandler := handler.NewAuthorHandler(authorService)
 
-	server := config.NewServer(cfg.Server, config.Handler{Author: authorHandler})
+	bookRepository := repository.NewBookRepository(db)
+	bookService := service.NewBookService(bookRepository)
+	bookHandler := handler.NewBookHandler(bookService)
+
+	server := config.NewServer(cfg.Server, config.Handler{Author: authorHandler, Book: bookHandler})
 	log.Printf("Server is running on %s...\n", cfg.Server.Port)
 	if err := server.Run(); err != nil {
 		panic(err)

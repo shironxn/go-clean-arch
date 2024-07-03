@@ -8,33 +8,34 @@ import (
 	"github.com/shironxn/go-clean-arch/internal/domain"
 )
 
-type AuthorHandler struct {
-	service domain.AuthorService
+type BookHandler struct {
+	service domain.BookService
 }
 
-func NewAuthorHandler(service domain.AuthorService) domain.AuthorHandler {
-	return &AuthorHandler{
+func NewBookHandler(service domain.BookService) domain.BookHandler {
+	return &BookHandler{
 		service: service,
 	}
 }
 
-func (h *AuthorHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var req domain.Author
+func (h *BookHandler) Create(w http.ResponseWriter, r *http.Request) {
+	var req domain.Book
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := h.service.Create(req); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	err := h.service.Create(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
-func (h *AuthorHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+func (h *BookHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	data, err := h.service.GetAll()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -52,7 +53,7 @@ func (h *AuthorHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-func (h *AuthorHandler) GetById(w http.ResponseWriter, r *http.Request) {
+func (h *BookHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue("id")
 	id, err := strconv.Atoi(path)
 	if err != nil {
@@ -63,13 +64,11 @@ func (h *AuthorHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	data, err := h.service.GetById(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 
 	response, err := json.Marshal(data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -77,7 +76,7 @@ func (h *AuthorHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-func (h *AuthorHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (h *BookHandler) Update(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue("id")
 	id, err := strconv.Atoi(path)
 	if err != nil {
@@ -85,7 +84,7 @@ func (h *AuthorHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req domain.Author
+	var req domain.Book
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -99,7 +98,7 @@ func (h *AuthorHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *AuthorHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (h *BookHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue("id")
 	id, err := strconv.Atoi(path)
 	if err != nil {

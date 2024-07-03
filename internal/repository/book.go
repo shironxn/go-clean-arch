@@ -19,7 +19,7 @@ func NewBookRepository(db *sql.DB) domain.BookRepository {
 
 func (r *BookRepository) Create(book domain.Book) error {
 	q := "INSERT INTO books (title, author_id, genre, synopsis) VALUES (?, ?, ?, ?)"
-	_, err := r.DB.Exec(q, book.Title, book.Author.ID, book.Genre, book.Synopsis)
+	_, err := r.DB.Exec(q, book.Title, book.AuthorId, book.Genre, book.Synopsis)
 	if err != nil {
 		return fmt.Errorf("failed to insert book: %v", err)
 	}
@@ -27,7 +27,7 @@ func (r *BookRepository) Create(book domain.Book) error {
 }
 
 func (r *BookRepository) GetAll() ([]domain.Book, error) {
-	q := "SELECT id, title, author_id, genre, synopsis FROM books"
+	q := "SELECT * FROM books"
 	rows, err := r.DB.Query(q)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch books: %v", err)
@@ -37,7 +37,7 @@ func (r *BookRepository) GetAll() ([]domain.Book, error) {
 	var books []domain.Book
 	for rows.Next() {
 		var book domain.Book
-		if err := rows.Scan(&book); err != nil {
+		if err := rows.Scan(&book.ID, &book.Title, &book.AuthorId, &book.Genre, &book.Synopsis, &book.CreatedAt, &book.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("failed to scan book row: %v", err)
 		}
 		books = append(books, book)
@@ -51,11 +51,11 @@ func (r *BookRepository) GetAll() ([]domain.Book, error) {
 }
 
 func (r *BookRepository) GetById(id int) (*domain.Book, error) {
-	q := "SELECT id, title, author_id, genre, synopsis FROM books WHERE id = ?"
+	q := "SELECT * FROM books WHERE id = ?"
 	row := r.DB.QueryRow(q, id)
 
 	var book domain.Book
-	if err := row.Scan(&book); err != nil {
+	if err := row.Scan(&book.ID, &book.Title, &book.AuthorId, &book.Genre, &book.Synopsis, &book.CreatedAt, &book.UpdatedAt); err != nil {
 		return nil, fmt.Errorf("failed to get book: %v", err)
 	}
 

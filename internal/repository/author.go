@@ -27,7 +27,7 @@ func (r *AuthorRepository) Create(author domain.Author) error {
 }
 
 func (r *AuthorRepository) GetAll() ([]domain.Author, error) {
-	q := "SELECT id, name, bio FROM authors"
+	q := "SELECT * FROM authors"
 	rows, err := r.DB.Query(q)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch authors: %v", err)
@@ -37,7 +37,7 @@ func (r *AuthorRepository) GetAll() ([]domain.Author, error) {
 	var authors []domain.Author
 	for rows.Next() {
 		var author domain.Author
-		if err := rows.Scan(&author.ID, &author.Name, &author.Bio); err != nil {
+		if err := rows.Scan(&author.ID, &author.Name, &author.Bio, &author.CreatedAt, &author.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("failed to scan author row: %v", err)
 		}
 		authors = append(authors, author)
@@ -51,11 +51,11 @@ func (r *AuthorRepository) GetAll() ([]domain.Author, error) {
 }
 
 func (r *AuthorRepository) GetById(id int) (*domain.Author, error) {
-	q := "SELECT id, name, bio FROM authors WHERE id = ?"
+	q := "SELECT * FROM authors WHERE id = ?"
 	row := r.DB.QueryRow(q, id)
 
 	var author domain.Author
-	if err := row.Scan(&author.ID, &author.Name, &author.Bio); err != nil {
+	if err := row.Scan(&author.ID, &author.Name, &author.Bio, &author.CreatedAt, &author.UpdatedAt); err != nil {
 		return nil, fmt.Errorf("failed to get author: %v", err)
 	}
 

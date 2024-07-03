@@ -27,7 +27,7 @@ func NewDatabase(conf config.DatabaseConfig) *Databse {
 }
 
 func (d *Databse) Connection() (*sql.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		d.User,
 		d.Pass,
 		d.Host,
